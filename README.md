@@ -3,3 +3,13 @@
 
 
 crab bot v0.0.2
+
+# How to clone the repo
+```bash
+git clone https://github.com/Iankulani/crab-bot-v0.0.2.git
+cd crab-bot-v0.0.2
+```
+# How to run
+```bash
+python crab-bot-v0.0.2.py
+```
