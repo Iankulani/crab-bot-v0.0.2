@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crabot-config
+  namespace: crabot
+data:
+  config.json: |
+    {
+      "monitoring": {
+        "enabled": true,
+        "port_scan_threshold": 10,
+        "syn_flood_threshold": 100,
+        "udp_flood_threshold": 500,
+        "http_flood_threshold": 200,
+        "ddos_threshold": 1000
+      },
+      "scanning": {
+        "default_ports": "1-1000",
+        "timeout": 30,
+        "rate_limit": false
+      },
+      "security": {
+        "auto_block": true,
+        "auto_block_threshold": 5,
+        "log_level": "INFO",
+        "backup_enabled": true,
+        "encrypt_passwords": true
+      },
+      "nikto": {
+        "enabled": true,
+        "timeout": 300,
+        "max_targets": 10,
+        "scan_level": 2,
+        "ssl_ports": "443,8443,9443",
+        "db_check": true
+      },
+      "traffic_generation": {
+        "enabled": true,
+        "max_duration": 300,
+        "max_packet_rate": 1000,
+        "require_confirmation": true,
+        "log_traffic": true,
+        "allow_floods": false
+      },
+      "social_engineering": {
+        "enabled": true,
+        "default_domain": "crabot.example.com",
+        "default_port": 8080,
+        "use_https": false,
+        "capture_credentials": true,
+        "log_all_requests": true,
+        "auto_shorten_urls": true
+      },
+      "ssh": {
+        "enabled": true,
+        "default_timeout": 30,
+        "max_connections": 10,
+        "keep_alive": 60,
+        "log_commands": true,
+        "allow_command_execution": true
+      }
+    }
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crabot-scripts
+  namespace: crabot
+data:
+  healthcheck.py: |
+    import sys
+    import sqlite3
+    from pathlib import Path
+    
+    try:
+        db_path = Path("/data/crab_data.db")
+        if db_path.exists():
+            conn = sqlite3.connect(str(db_path))
+            conn.execute("SELECT 1 FROM command_history LIMIT 1")
+            conn.close()
+            sys.exit(0)
+        else:
+            sys.exit(1)
+    except Exception:
+        sys.exit(1)
