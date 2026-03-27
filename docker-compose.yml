@@ -1,0 +1,138 @@
+version: '3.8'
+
+services:
+  crab-bot:
+    build: .
+    container_name: crab-bot
+    hostname: crab-bot
+    restart: unless-stopped
+    network_mode: host  # For network monitoring and traffic generation
+    privileged: true    # Required for iptables and raw socket operations
+    volumes:
+      # Configuration and data
+      - ./config:/home/crabot/.crab_bot
+      - ./reports:/app/reports
+      - ./scan_results:/app/scan_results
+      - ./alerts:/app/alerts
+      - ./monitoring:/app/monitoring
+      - ./backups:/app/backups
+      - ./temp:/app/temp
+      - ./scripts:/app/scripts
+      - ./phishing_templates:/app/phishing_templates
+      - ./phishing_logs:/app/phishing_logs
+      - ./captured_credentials:/app/captured_credentials
+      - ./ssh_keys:/app/ssh_keys
+      - ./ssh_logs:/app/ssh_logs
+      - ./traffic_logs:/app/traffic_logs
+      - ./nikto_results:/app/nikto_results
+      - ./whatsapp_session:/app/whatsapp_session
+      
+      # SSH keys and configs
+      - ~/.ssh:/home/crabot/.ssh:ro
+      - ~/.config:/home/crabot/.config:ro
+      
+      # Logs
+      - ./logs:/app/logs
+      
+    environment:
+      - TZ=UTC
+      - PYTHONUNBUFFERED=1
+      - CRABOT_CONFIG=/home/crabot/.crab_bot/config.json
+      - CRABOT_DATABASE=/home/crabot/.crab_bot/crab_data.db
+      
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_ADMIN
+      - SYS_PTRACE
+      
+    security_opt:
+      - apparmor:unconfined
+      
+    devices:
+      - /dev/net/tun
+      
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv4.conf.all.forwarding=1
+      
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        
+    networks:
+      - crabot-network
+
+  # PostgreSQL for production (optional)
+  postgres:
+    image: postgres:15-alpine
+    container_name: crabot-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: crabot
+      POSTGRES_USER: crabot
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change_me_secure}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - crabot-network
+
+  # Redis for caching and message queue (optional)
+  redis:
+    image: redis:7-alpine
+    container_name: crabot-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - crabot-network
+
+  # Prometheus for monitoring (optional)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: crabot-prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    ports:
+      - "9090:9090"
+    networks:
+      - crabot-network
+
+  # Grafana for visualization (optional)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: crabot-grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    volumes:
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - crabot-network
+
+networks:
+  crabot-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
