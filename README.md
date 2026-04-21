@@ -51,3 +51,6 @@ cd crab-bot-v0.0.2
 ```bash
 python crab-bot-v0.0.2.py
 ```
+# Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Iankulani/crab-bot-v0.0.2&type=Date)](https://star-history.com/#Iankulani/crab-bot-v0.0.2&Date)
