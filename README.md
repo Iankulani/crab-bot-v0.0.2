@@ -20,7 +20,8 @@ IoT integration within Crab-Bot v0.0.2 is designed to work with device APIs, mes
 
 Another important design goal of Crab-Bot v0.0.2 is global accessibility. The tool is intended to operate worldwide, enabling users to send commands and receive responses from any location with internet connectivity. Since it operates through internet-based messaging services, geographical limitations are minimized. Whether a user is managing devices in a data center, monitoring a distributed IoT deployment, or interacting with a cybersecurity research environment, the tool can relay commands and information across global networks.
 
-Security is a central consideration in the design of Crab-Bot v0.0.2. Because the system processes commands that may interact with sensitive infrastructure or monitoring tools, it incorporates authentication and access control mechanisms. Only approved users or chat groups can issue commands to the system. Message verification, API tokens, and platform-specific security features help ensure that unauthorized users cannot control the bot.
+Security is a central consideration in the design of Crab-Bot v0.0.2. Because the system processes commands that may interact with sensitive infrastructure or monitoring tools, it incorporates authentication and access control mechanisms. 
+Only approved users or chat groups can issue commands to the system. Message verification, API tokens, and platform-specific security features help ensure that unauthorized users cannot control the bot.
 
 In addition to authentication, the system can implement role-based command permissions. This means that different users can have different levels of access depending on their roles. For example, some users may only be able to request system status reports, while others may be allowed to execute administrative commands or initiate automation processes. This layered permission model helps maintain operational security while still allowing collaborative use of the tool.
 
@@ -28,7 +29,8 @@ Crab-Bot v0.0.2 also supports automation workflows. Users can create automated r
 
 The chatbot’s command interface is designed to be flexible and easy to expand. Commands typically follow a structured syntax that allows parameters to be passed along with the command. For instance, a user might send a message instructing the bot to check the status of a specific device or retrieve system logs from a certain service. The command parser interprets the syntax and forwards the request to the appropriate module for execution.
 
-From a development perspective, Crab-Bot v0.0.2 can be implemented using common programming languages such as Python or JavaScript, which offer strong support for API integrations and networking libraries. Messaging platform APIs allow the bot to send and receive messages, while backend modules handle cybersecurity tasks and device communication. This architecture ensures that developers can integrate the chatbot with existing monitoring systems or security frameworks.
+From a development perspective, Crab-Bot v0.0.2 can be implemented using common programming languages such as Python or JavaScript, which offer strong support for API integrations and networking libraries. Messaging platform APIs allow the bot to send and receive messages, while backend modules handle cybersecurity tasks and device communication. 
+This architecture ensures that developers can integrate the chatbot with existing monitoring systems or security frameworks.
 
 The tool can also serve educational purposes. Students and cybersecurity enthusiasts can use Crab-Bot v0.0.2 to learn about automation, messaging APIs, network monitoring, and IoT communication. By interacting with the bot through familiar chat applications, learners can experiment with commands and observe how automated systems respond to requests and events.
 
